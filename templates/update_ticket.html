@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktualizuj Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        input[type="text"], input[type="checkbox"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aktualizuj Ticket</h1>
+    <form method="POST" action="{{ url_for('update', ticket_id=ticket.id) }}">
+        <label for="title">Tytuł:</label>
+        <input type="text" name="title" id="title" value="{{ ticket.title }}" required>
+
+        <label for="contact">Kontakt:</label>
+        <input type="text" name="contact" id="contact" value="{{ ticket.contact }}" required>
+
+        <label for="client">Klient:</label>
+        <input type="text" name="client" id="client" value="{{ ticket.client }}" required>
+
+        <label for="gid">GID:</label>
+        <input type="text" name="gid" id="gid" value="{{ ticket.gid }}" required>
+
+        <label for="visible">Widoczny:</label>
+        <input type="text" name="visible" id="visible" value="{{ ticket.visible }}" required>
+
+        <label for="mrygacz">Migacz:</label>
+        <input type="text" name="mrygacz" id="mrygacz" value="{{ ticket.mrygacz }}" required>
+
+        <input type="submit" value="Zaktualizuj Ticket">
+    </form>
+</body>
+</html>
