@@ -172,56 +172,57 @@
 
     <script>
         let soundEnabled = false;
-        let previousTickets = [];
+        let previousTickets = [];  
         let blurred = false;
-    
+
         function playNewTicketSound() {
             if (soundEnabled) {
                 const sound = document.getElementById('new-ticket-sound');
-                sound.currentTime = 0;
+                sound.currentTime = 0; 
                 sound.play().catch(error => {
                     console.error('Błąd przy odtwarzaniu dźwięku:', error);
                 });
             }
         }
-    
+
         function blinkRow(row) {
-            row.classList.add('blink');
+            row.classList.add('blink'); 
         }
-    
+
         function applyBlurEffect() {
             if (blurred) {
-                const contactCells = document.querySelectorAll('.contact-column td');
-                const clientCells = document.querySelectorAll('.client-column td');
-                const gidCells = document.querySelectorAll('.gid-column td');
+                const contactCells = document.querySelectorAll('.contact-column');
+                const clientCells = document.querySelectorAll('.client-column');
+                const gidCells = document.querySelectorAll('.gid-column');
                 
                 contactCells.forEach(cell => cell.classList.add('blurred'));
                 clientCells.forEach(cell => cell.classList.add('blurred'));
                 gidCells.forEach(cell => cell.classList.add('blurred'));
             }
         }
-    
+
         function toggleBlur() {
-            const contactCells = document.querySelectorAll('.contact-column td');
-            const clientCells = document.querySelectorAll('.client-column td');
-            const gidCells = document.querySelectorAll('.gid-column td');
-    
-            blurred = !blurred;
-    
+            const contactCells = document.querySelectorAll('.contact-column');
+            const clientCells = document.querySelectorAll('.client-column');
+            const gidCells = document.querySelectorAll('.gid-column');
+
+            blurred = !blurred; // Odwraca stan (zamazane/odsłonięte)
+
             contactCells.forEach(cell => cell.classList.toggle('blurred', blurred));
             clientCells.forEach(cell => cell.classList.toggle('blurred', blurred));
             gidCells.forEach(cell => cell.classList.toggle('blurred', blurred));
         }
-    
-        // Event Listener for blur toggle button
+
+        // Dodanie zdarzenia kliknięcia dla przycisku Ukryj/Pokaż dane
         document.getElementById('toggle-blur-button').addEventListener('click', toggleBlur);
-    
+
+        // Dodanie zdarzenia na wciśnięcie klawisza Enter
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 toggleBlur();
             }
         });
-    
+
         function fetchTickets() {
             fetch('/tickets_json')
                 .then(response => {
@@ -233,9 +234,9 @@
                 .then(data => {
                     const ticketTableBody = document.getElementById('ticket-table-body');
                     ticketTableBody.innerHTML = '';
-    
+
                     const currentVisibleTickets = data.filter(ticket => ticket.visible === "True");
-    
+
                     currentVisibleTickets.forEach(ticket => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -246,23 +247,24 @@
                             <td class="uploaded-column">${ticket.uploaded}</td>
                         `;
                         ticketTableBody.appendChild(row);
-    
+
                         if (ticket.mrygacz === "True") {
                             blinkRow(row);
                         }
                     });
-    
+
+                    // Zachowanie efektu blur po załadowaniu nowych ticketów
                     applyBlurEffect();
-    
+
                     const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
                     if (newTickets.length > 0) {
                         playNewTicketSound();
                     }
-    
+
                     if (ticketTableBody.innerHTML === '') {
                         ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
                     }
-    
+
                     previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
                 })
                 .catch(error => {
@@ -270,14 +272,14 @@
                     ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Błąd przy pobieraniu ticketów: ${error.message}</td></tr>`;
                 });
         }
-    
+
         function enableSound() {
             soundEnabled = true;
             document.getElementById('enable-sound-button').style.display = 'none';
         }
-    
+
         document.getElementById('enable-sound-button').addEventListener('click', enableSound);
-    
+
         function fetchRemotePeople() {
             fetch('/remote_people')
                 .then(response => response.json())
@@ -295,7 +297,7 @@
                     document.getElementById('footer-text').style.display = 'none';
                 });
         }
-    
+
         function fetchAbsentPeople() {
             fetch('/absent_people')
                 .then(response => response.json())
@@ -313,13 +315,13 @@
                     document.getElementById('absence-text').style.display = 'none';
                 });
         }
-    
+
         setInterval(fetchTickets, 10000);
         fetchTickets();
-    
+
         fetchRemotePeople();  
         setInterval(fetchRemotePeople, 600000);  
-    
+
         fetchAbsentPeople(); 
         setInterval(fetchAbsentPeople, 600000);  
     </script>
