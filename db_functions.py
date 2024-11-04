@@ -57,7 +57,7 @@ def delete_ticket(ticket_id):
 
 def get_all_tickets():
     with get_db_connection() as conn:
-        tickets = conn.execute('SELECT * FROM tickets ORDER BY id DESC').fetchall()
+        tickets = conn.execute('SELECT * FROM tickets ORDER BY id ASC').fetchall()
         return tickets
 
 def get_ticket_by_id(ticket_id):
