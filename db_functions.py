@@ -23,17 +23,33 @@ def create_base():
 def add_ticket(title, contact, client, gid):
     if not gid:
         gid = "XX1234"
+
+    month_map = {
+        "01": "sty", "02": "lut", "03": "mar", "04": "kwi",
+        "05": "maj", "06": "cze", "07": "lip", "08": "sie",
+        "09": "wrz", "10": "paź", "11": "lis", "12": "gru"
+    }
+
     now = datetime.now()
-    time = now.strftime("%H:%M %d-%m")
+    hour_minute = now.strftime("%H:%M")  
+    day = now.strftime("%d")             
+    month_number = now.strftime("%m")    
+
+    month_name = month_map[month_number]
+
+    time = f"{hour_minute} {day} {month_name}"
+
     visible = "True"
     mrygacz = "True"
+
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO tickets (title, contact, client, gid, visible, mrygacz, uploaded) VALUES (?, ?, ?, ?, ?, ?, ?)', 
-                       (title, contact, client, gid, visible, mrygacz, time))
+        cursor.execute(
+            'INSERT INTO tickets (title, contact, client, gid, visible, mrygacz, uploaded) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+            (title, contact, client, gid, visible, mrygacz, time)
+        )
         conn.commit()
         ticket_id = cursor.lastrowid
-        #print(ticket_id)
         return ticket_id
 
 def update_ticket(ticket_id, title, contact, client, gid, visible):
