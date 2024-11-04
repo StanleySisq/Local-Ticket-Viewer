@@ -37,7 +37,7 @@ def add_ticket(title, contact, client, gid):
 
     month_name = month_map[month_number]
 
-    time = f"{hour_minute} {day} {month_name}"
+    time = f"{day} {month_name}, {hour_minute}"
 
     visible = "True"
     mrygacz = "True"
