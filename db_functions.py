@@ -16,11 +16,12 @@ def create_base():
             gid TEXT NOT NULL,
             visible TEXT NOT NULL,
             mrygacz TEXT NOT NULL,
-            uploaded TEXT NOT NULL
+            uploaded TEXT NOT NULL,
+            link TEXT NOT NULL
         );''')
         conn.commit()
 
-def add_ticket(title, contact, client, gid):
+def add_ticket(title, contact, client, gid, link):
     if not gid:
         gid = "XX1234"
 
@@ -45,8 +46,8 @@ def add_ticket(title, contact, client, gid):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            'INSERT INTO tickets (title, contact, client, gid, visible, mrygacz, uploaded) VALUES (?, ?, ?, ?, ?, ?, ?)', 
-            (title, contact, client, gid, visible, mrygacz, time)
+            'INSERT INTO tickets (title, contact, client, gid, visible, mrygacz, uploaded, link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+            (title, contact, client, gid, visible, mrygacz, time, link)
         )
         conn.commit()
         ticket_id = cursor.lastrowid

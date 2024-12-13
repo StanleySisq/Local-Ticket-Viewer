@@ -8,7 +8,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: url('/static/photos/background.png') no-repeat center center fixed;
-            background-size: cover; /* Zapewnia, że obraz będzie pokrywał całą stronę */
+            background-size: cover; 
             color: #e0e0e0;
             margin: 0;
             padding: 20px;
@@ -23,7 +23,7 @@
             border-collapse: collapse;
             margin-top: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            background-color: rgba(60, 60, 60, 0.8); /* Przezroczyste tło dla tabeli */
+            background-color: rgba(60, 60, 60, 0.8); 
         }
 
         th, td {
@@ -134,7 +134,7 @@
         }
 
         .blurred {
-            filter: blur(5px); /* Zastosowanie efektu zamazania */
+            filter: blur(5px); 
         }
     </style>
 </head>
@@ -206,17 +206,15 @@
             const clientCells = document.querySelectorAll('.client-column');
             const gidCells = document.querySelectorAll('.gid-column');
 
-            blurred = !blurred; // Odwraca stan (zamazane/odsłonięte)
+            blurred = !blurred; 
 
             contactCells.forEach(cell => cell.classList.toggle('blurred', blurred));
             clientCells.forEach(cell => cell.classList.toggle('blurred', blurred));
             gidCells.forEach(cell => cell.classList.toggle('blurred', blurred));
         }
 
-        // Dodanie zdarzenia kliknięcia dla przycisku Ukryj/Pokaż dane
         document.getElementById('toggle-blur-button').addEventListener('click', toggleBlur);
 
-        // Dodanie zdarzenia na wciśnięcie klawisza Enter
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 toggleBlur();
@@ -246,6 +244,14 @@
                             <td class="gid-column">${ticket.gid}</td>
                             <td class="uploaded-column">${ticket.uploaded}</td>
                         `;
+                        
+                        if (ticket.link) {
+                            row.style.cursor = 'pointer'; 
+                            row.addEventListener('click', () => {
+                                window.open(ticket.link, '_blank');
+                            });
+                        }
+
                         ticketTableBody.appendChild(row);
 
                         if (ticket.mrygacz === "True") {
@@ -253,7 +259,6 @@
                         }
                     });
 
-                    // Zachowanie efektu blur po załadowaniu nowych ticketów
                     applyBlurEffect();
 
                     const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
@@ -271,7 +276,7 @@
                     const ticketTableBody = document.getElementById('ticket-table-body');
                     ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Błąd przy pobieraniu ticketów: ${error.message}</td></tr>`;
                 });
-        }
+}
 
         function enableSound() {
             soundEnabled = true;

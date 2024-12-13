@@ -18,7 +18,7 @@ def tickets_json():
     tickets = db_functions.get_all_tickets()
     tickets_list = [{'id': ticket['id'], 'title': ticket['title'], 'contact': ticket['contact'], 
                      'client': ticket['client'], 'gid': ticket['gid'], 'visible': ticket['visible'], 
-                     'mrygacz': ticket['mrygacz'], 'uploaded': ticket['uploaded']} for ticket in tickets]
+                     'mrygacz': ticket['mrygacz'], 'uploaded': ticket['uploaded'], 'link': ticket['link']} for ticket in tickets]
     return jsonify(tickets_list)
 
 def update_mrygacz(ticket_id):
@@ -33,7 +33,8 @@ def add():
         contact = request.form['contact']
         client = request.form['client']
         gid = request.form['gid']
-        ticket_id = db_functions.add_ticket(title, contact, client, gid)
+        link = request.form['link']
+        ticket_id = db_functions.add_ticket(title, contact, client, gid, link)
 
         threading.Thread(target=update_mrygacz, args=(ticket_id,)).start()
         db_functions.write_log(f"Ticket {ticket_id} MANUAL ADD")
@@ -89,19 +90,21 @@ def add_ticket():
             'title': request.form.get('title'),
             'contact': request.form.get('contact'),
             'client': request.form.get('client'),
-            'gid': request.form.get('gid')
+            'gid': request.form.get('gid'),
+            'link': request.form.get('link')
         }
 
     title = data.get('title')
     contact = data.get('contact')
     client = data.get('client')
     gid = data.get('gid')
+    link = data.get('link')
 
     if not all([title, contact, client, gid]):
         db_functions.write_log(f"Ticket API ADD missing DATA 400 {data}")
         return jsonify({'error': 'Missing data fields'}), 400
 
-    ticket_id = db_functions.add_ticket(title, contact, client, gid)
+    ticket_id = db_functions.add_ticket(title, contact, client, gid, link)
 
     threading.Thread(target=update_mrygacz, args=(ticket_id,)).start()
     db_functions.write_log(f"Ticket {ticket_id} API ADD migacz ON 201")
@@ -177,7 +180,7 @@ def clear_vacation():
 @app.route('/remote_people')
 def get_remote_people():
     try:
-        with open('remote.txt', 'r', encoding='utf-8') as file:
+        with open('remote.txt', 'r', encoding='utf-8') as file: 
             people = [line.strip() for line in file if line.strip()]
         return jsonify({'people': people})
     except FileNotFoundError:
