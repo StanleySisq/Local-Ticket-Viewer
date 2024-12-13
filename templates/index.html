@@ -244,11 +244,12 @@
                             <td class="gid-column">${ticket.gid}</td>
                             <td class="uploaded-column">${ticket.uploaded}</td>
                         `;
-                        
+                  
                         if (ticket.link) {
-                            row.style.cursor = 'pointer'; 
+                            row.style.cursor = 'pointer';
                             row.addEventListener('click', () => {
-                                window.open(ticket.link, '_blank');
+                                const link = ticket.link.startsWith('http') ? ticket.link : `${ticket.link}`;
+                                window.open(link, '_blank'); 
                             });
                         }
 
@@ -258,8 +259,6 @@
                             blinkRow(row);
                         }
                     });
-
-                    applyBlurEffect();
 
                     const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
                     if (newTickets.length > 0) {
