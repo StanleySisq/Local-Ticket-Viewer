@@ -248,8 +248,16 @@
                         if (ticket.link) {
                             row.style.cursor = 'pointer';
                             row.addEventListener('click', () => {
-                                const link = ticket.link.startsWith('http') ? ticket.link : `${ticket.link}`;
-                                window.open(link, '_blank'); 
+                                const link = ticket.link.startsWith('http://') || ticket.link.startsWith('https://') 
+                                    ? ticket.link 
+                                    : `http://${ticket.link}`;
+                                
+                                // Tworzenie dynamicznego <a>
+                                const a = document.createElement('a');
+                                a.href = link;
+                                a.target = '_blank'; // Otwórz w nowej karcie
+                                a.rel = 'noopener noreferrer'; // Dla bezpieczeństwa
+                                a.click(); // Symulacja kliknięcia
                             });
                         }
 
