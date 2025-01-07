@@ -73,6 +73,11 @@ def update_ticket(ticket_id, title, contact, client, gid, visible, queue):
         )
         conn.commit()
 
+def update_ticket_mrygacz(ticket_id, mrygacz_value):
+    with get_db_connection() as conn:
+        conn.execute('UPDATE tickets SET mrygacz = ? WHERE id = ?', (mrygacz_value, ticket_id))
+        conn.commit()
+
 def get_all_tickets(queue=None):
     with get_db_connection() as conn:
         if queue:
