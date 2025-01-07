@@ -15,10 +15,11 @@ def index():
 
 @app.route('/tickets_json')
 def tickets_json():
-    tickets = db_functions.get_all_tickets()
+    queue = request.args.get('queue',"Helpdesk")
+    tickets = db_functions.get_all_tickets(queue)
     tickets_list = [{'id': ticket['id'], 'title': ticket['title'], 'contact': ticket['contact'], 
                      'client': ticket['client'], 'gid': ticket['gid'], 'visible': ticket['visible'], 
-                     'mrygacz': ticket['mrygacz'], 'uploaded': ticket['uploaded'], 'link': ticket['link']} for ticket in tickets]
+                     'mrygacz': ticket['mrygacz'], 'uploaded': ticket['uploaded'], 'link': ticket['link'], 'queue': ticket['queue']} for ticket in tickets]
     return jsonify(tickets_list)
 
 def update_mrygacz(ticket_id):
@@ -34,7 +35,8 @@ def add():
         client = request.form['client']
         gid = request.form['gid']
         link = request.form['link']
-        ticket_id = db_functions.add_ticket(title, contact, client, gid, link)
+        queue = request.form['queue'] 
+        ticket_id = db_functions.add_ticket(title, contact, client, gid, link, queue)
 
         threading.Thread(target=update_mrygacz, args=(ticket_id,)).start()
         db_functions.write_log(f"Ticket {ticket_id} MANUAL ADD")
@@ -72,8 +74,9 @@ def update(ticket_id):
         gid = request.form.get('gid')
         visible = request.form.get('visible')
         mrygacz = request.form.get('mrygacz')
+        queue = request.form.get('queue')
 
-        db_functions.update_ticket(ticket_id, title, contact, client, gid, visible)
+        db_functions.update_ticket(ticket_id, title, contact, client, gid, visible, queue)
         db_functions.update_ticket_mrygacz(ticket_id, mrygacz)
         db_functions.write_log(f"Ticket {ticket_id} MANUAL UPDATE")
 
@@ -91,7 +94,8 @@ def add_ticket():
             'contact': request.form.get('contact'),
             'client': request.form.get('client'),
             'gid': request.form.get('gid'),
-            'link': request.form.get('link')
+            'link': request.form.get('link'),
+            'queue': request.form.get('queue')
         }
 
     title = data.get('title')
@@ -99,12 +103,13 @@ def add_ticket():
     client = data.get('client')
     gid = data.get('gid')
     link = data.get('link')
+    queue = data.get('queue')
 
-    if not all([title, contact, client, gid]):
+    if not all([title, contact, client, gid, queue]):
         db_functions.write_log(f"Ticket API ADD missing DATA 400 {data}")
         return jsonify({'error': 'Missing data fields'}), 400
 
-    ticket_id = db_functions.add_ticket(title, contact, client, gid, link)
+    ticket_id = db_functions.add_ticket(title, contact, client, gid, link, queue)
 
     threading.Thread(target=update_mrygacz, args=(ticket_id,)).start()
     db_functions.write_log(f"Ticket {ticket_id} API ADD migacz ON 201")
@@ -129,8 +134,9 @@ def update_ticket(ticket_id):
     gid = data.get('gid') if data.get('gid') else existing_ticket[4]
     visible = data.get('visible') if data.get('visible') else existing_ticket[5]
     mrygacz = data.get('mrygacz') if data.get('mrygacz') else existing_ticket[6]
+    queue = data.get('queue') if data.get('queue') else existing_ticket[7]
 
-    db_functions.update_ticket(ticket_id, title, contact, client, gid, visible)
+    db_functions.update_ticket(ticket_id, title, contact, client, gid, visible, queue)
     db_functions.write_log(f"Ticket {ticket_id} API UPDATE 200")
 
     return jsonify({'message': 'Ticket updated successfully'}), 200

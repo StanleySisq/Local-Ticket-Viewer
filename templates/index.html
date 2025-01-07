@@ -164,6 +164,7 @@
         <button id="toggle-blur-button">Ukryj/Pokaż dane</button>
         <button onclick="location.href='/add'">Dodaj Ticket</button>
         <button onclick="location.href='/select_ticket'">Aktualizuj Ticket</button>
+        <button id="change-queue-button" onclick="toggleQueue()">Helpdesk</button>
     </div>
 
     <div id="footer-text" class="footer-text"></div>
@@ -174,6 +175,7 @@
         let soundEnabled = false;
         let previousTickets = [];  
         let blurred = false;
+        let queue = 'Helpdesk'
 
         function playNewTicketSound() {
             if (soundEnabled) {
@@ -220,9 +222,14 @@
                 toggleBlur();
             }
         });
+        function toggleQueue() {
+            queue = queue === 'Helpdesk' ? 'Administracyjne' : 'Helpdesk';
+            document.getElementById('change-queue-button').innerText = queue;
+            fetchTickets(); 
+        }
 
         function fetchTickets() {
-            fetch('/tickets_json')
+            fetch(`/tickets_json?queue=${encodeURIComponent(queue)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Błąd sieciowy');
@@ -252,12 +259,11 @@
                                     ? ticket.link 
                                     : `http://${ticket.link}`;
                                 
-                                // Tworzenie dynamicznego <a>
                                 const a = document.createElement('a');
                                 a.href = link;
-                                a.target = '_blank'; // Otwórz w nowej karcie
-                                a.rel = 'noopener noreferrer'; // Dla bezpieczeństwa
-                                a.click(); // Symulacja kliknięcia
+                                a.target = '_blank'; 
+                                a.rel = 'noopener noreferrer'; 
+                                a.click(); 
                             });
                         }
 
