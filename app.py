@@ -134,7 +134,7 @@ def update_ticket(ticket_id):
     gid = data.get('gid') if data.get('gid') else existing_ticket[4]
     visible = data.get('visible') if data.get('visible') else existing_ticket[5]
     mrygacz = data.get('mrygacz') if data.get('mrygacz') else existing_ticket[6]
-    queue = data.get('queue') if data.get('queue') else existing_ticket[7]
+    queue = data.get('queue') if data.get('queue') else existing_ticket[9]
 
     db_functions.update_ticket(ticket_id, title, contact, client, gid, visible, queue)
     db_functions.write_log(f"Ticket {ticket_id} API UPDATE 200")
