@@ -269,9 +269,17 @@
                 })
                 .then(data => {
                     const ticketTableBody = document.getElementById('ticket-table-body');
-                    ticketTableBody.innerHTML = '';
 
                     const currentVisibleTickets = data.filter(ticket => ticket.visible === "True");
+
+                    if (currentVisibleTickets.length !== 0){
+                        ticketTableBody.innerHTML = '';
+                        
+                    } else {
+                        if(queue === 'Blue'){
+                            ticketTableBody.innerHTML = '';
+                        }
+                    }
 
                     currentVisibleTickets.forEach(ticket => {
                         const row = document.createElement('tr');
@@ -305,17 +313,17 @@
                         }
                     });
 
-                    const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
-                    if (newTickets.length > 0) {
-                        playNewTicketSound();
-                    }
-
                     if (ticketTableBody.innerHTML === '') {
                         if (queue !== 'Blue'){
                             fetchTicketsBlue()
                         } else {
                             ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
                         }
+                    }
+
+                    const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
+                    if (newTickets.length > 0) {
+                        playNewTicketSound();
                     }
 
                     previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
@@ -371,17 +379,17 @@
                         }
                     });
 
-                    const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
-                    if (newTickets.length > 0) {
-                        playNewTicketSound();
-                    }
-
                     if (ticketTableBody.innerHTML === '') {
                         ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
                     } else {
                         const rowX = document.createElement('tr');
-                        rowX.innerHTML = `<tr><td colspan="5" class="loading">Brak ticketów w ${queue}- Wyświetlono BLUE.</td></tr>`;
+                        rowX.innerHTML = `<tr><td colspan="5" class="loading">Brak ticketów w ${queue} - Wyświetlono Blue.</td></tr>`;
                         ticketTableBody.appendChild(rowX);
+                    }
+
+                    const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
+                    if (newTickets.length > 0) {
+                        playNewTicketSound();
                     }
 
                     previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
