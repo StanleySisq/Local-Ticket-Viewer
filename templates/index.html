@@ -313,7 +313,6 @@
                     if (ticketTableBody.innerHTML === '') {
                         if (queue !== 'Blue'){
                             fetchTicketsBlue()
-                            ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak ticketów w ${queue}- Wyświetlono BLUE.</td></tr>`;
                         } else {
                             ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
                         }
@@ -379,9 +378,8 @@
 
                     if (ticketTableBody.innerHTML === '') {
                         ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
-                        if (queue !== 'Blue'){
-                            
-                        }
+                    } else {
+                        ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak ticketów w ${queue}- Wyświetlono BLUE.</td></tr>`;
                     }
 
                     previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
