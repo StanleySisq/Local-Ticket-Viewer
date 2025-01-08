@@ -311,7 +311,12 @@
                     }
 
                     if (ticketTableBody.innerHTML === '') {
-                        ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
+                        if (queue !== 'Blue'){
+                            fetchTicketsBlue()
+                            ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak ticketów w ${queue}- Wyświetlono BLUE.</td></tr>`;
+                        } else {
+                            ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
+                        }
                     }
 
                     previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
@@ -321,6 +326,71 @@
                     ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Błąd przy pobieraniu ticketów: ${error.message}</td></tr>`;
                 });
 }
+        function fetchTicketsBlue() {
+            fetch(`/tickets_json?queue=${encodeURIComponent('Blue')}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Błąd sieciowy');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const ticketTableBody = document.getElementById('ticket-table-body');
+                    ticketTableBody.innerHTML = '';
+
+                    const currentVisibleTickets = data.filter(ticket => ticket.visible === "True");
+
+                    currentVisibleTickets.forEach(ticket => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="title-column">${ticket.title}</td>
+                            <td class="contact-column">${ticket.contact}</td>
+                            <td class="client-column">${ticket.client}</td>
+                            <td class="gid-column">${ticket.gid}</td>
+                            <td class="uploaded-column">${ticket.uploaded}</td>
+                        `;
+                  
+                        if (ticket.link) {
+                            row.style.cursor = 'pointer';
+                            row.addEventListener('click', () => {
+                                const link = ticket.link.startsWith('http://') || ticket.link.startsWith('https://') 
+                                    ? ticket.link 
+                                    : `http://${ticket.link}`;
+                                
+                                const a = document.createElement('a');
+                                a.href = link;
+                                a.target = '_blank'; 
+                                a.rel = 'noopener noreferrer'; 
+                                a.click(); 
+                            });
+                        }
+
+                        ticketTableBody.appendChild(row);
+
+                        if (ticket.mrygacz === "True") {
+                            blinkRow(row);
+                        }
+                    });
+
+                    const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
+                    if (newTickets.length > 0) {
+                        playNewTicketSound();
+                    }
+
+                    if (ticketTableBody.innerHTML === '') {
+                        ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
+                        if (queue !== 'Blue'){
+                            
+                        }
+                    }
+
+                    previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
+                })
+                .catch(error => {
+                    const ticketTableBody = document.getElementById('ticket-table-body');
+                    ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Błąd przy pobieraniu ticketów: ${error.message}</td></tr>`;
+                });
+        }
 
         function enableSound() {
             soundEnabled = true;
