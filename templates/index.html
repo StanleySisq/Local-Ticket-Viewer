@@ -272,14 +272,10 @@
 
                     const currentVisibleTickets = data.filter(ticket => ticket.visible === "True");
 
-                    if (currentVisibleTickets.length !== 0){
-                        ticketTableBody.innerHTML = '';
-                        
+                    if (currentVisibleTickets.length === 0 && queue !== 'Blue'){
+                        fetchTicketsBlue()
                     } else {
-                        if(queue === 'Blue'){
-                            ticketTableBody.innerHTML = '';
-                        }
-                    }
+                    ticketTableBody.innerHTML = '';
 
                     currentVisibleTickets.forEach(ticket => {
                         const row = document.createElement('tr');
@@ -314,19 +310,15 @@
                     });
 
                     if (ticketTableBody.innerHTML === '') {
-                        if (queue !== 'Blue'){
-                            fetchTicketsBlue()
-                        } else {
-                            ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
-                        }
-                    }
+                        ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
+                                            }
 
                     const newTickets = currentVisibleTickets.filter(ticket => !previousTickets.includes(ticket.gid));
                     if (newTickets.length > 0) {
                         playNewTicketSound();
                     }
 
-                    previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
+                    previousTickets = currentVisibleTickets.map(ticket => ticket.gid); }
                 })
                 .catch(error => {
                     const ticketTableBody = document.getElementById('ticket-table-body');
