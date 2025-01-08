@@ -100,6 +100,33 @@
             border-radius: 5px;
         }
 
+        #queue-select {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        font-size: 12px;
+        border-radius: 5px;
+        margin-left: 10px;
+        cursor: pointer;
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        }
+
+        #queue-select:hover {
+            background-color: #45a049;
+        }
+
+        #queue-select:focus {
+            outline: none;
+        }
+
+        #queue-select option {
+            background-color: #333;
+            color: white;
+        }
+
         #enable-sound-button:hover {
             background-color: #45a049;
         }
@@ -164,7 +191,11 @@
         <button id="toggle-blur-button">Ukryj/Pokaż dane</button>
         <button onclick="location.href='/add'">Dodaj Ticket</button>
         <button onclick="location.href='/select_ticket'">Aktualizuj Ticket</button>
-        <button id="change-queue-button" onclick="toggleQueue()">Helpdesk</button>
+        <select id="queue-select" onchange="changeQueue()">
+            <option value="Blue">Blue</option>
+            <option value="Red">Red</option>
+            <option value="Grey">Grey</option>
+        </select>
     </div>
 
     <div id="footer-text" class="footer-text"></div>
@@ -175,7 +206,7 @@
         let soundEnabled = false;
         let previousTickets = [];  
         let blurred = false;
-        let queue = 'Helpdesk'
+        let queue = 'Blue'
 
         function playNewTicketSound() {
             if (soundEnabled) {
@@ -222,10 +253,10 @@
                 toggleBlur();
             }
         });
-        function toggleQueue() {
-            queue = queue === 'Helpdesk' ? 'Administracyjne' : 'Helpdesk';
-            document.getElementById('change-queue-button').innerText = queue;
-            fetchTickets(); 
+        function changeQueue() {
+            const selectElement = document.getElementById('queue-select');
+            queue = selectElement.value;
+            fetchTickets();
         }
 
         function fetchTickets() {
