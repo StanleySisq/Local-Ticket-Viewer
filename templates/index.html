@@ -379,7 +379,9 @@
                     if (ticketTableBody.innerHTML === '') {
                         ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak widocznych ticketów.</td></tr>`;
                     } else {
-                        ticketTableBody.innerHTML = `<tr><td colspan="5" class="loading">Brak ticketów w ${queue}- Wyświetlono BLUE.</td></tr>`;
+                        const rowX = document.createElement('tr');
+                        rowX.innerHTML = `<tr><td colspan="5" class="loading">Brak ticketów w ${queue}- Wyświetlono BLUE.</td></tr>`;
+                        ticketTableBody.appendChild(rowX);
                     }
 
                     previousTickets = currentVisibleTickets.map(ticket => ticket.gid);
